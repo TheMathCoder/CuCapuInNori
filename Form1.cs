@@ -23,6 +23,29 @@ namespace CuCapuInNori
         DataTable dt = new DataTable();
         int click = 0;
         int x1=0, x2=0, y1=0, y2=0;
+
+
+        public class Price
+        {
+            public string Total { get; set; }
+        }
+
+        public class FlightDestination
+        {
+            public string Type { get; set; }
+            public string Origin { get; set; }
+            public string Destination { get; set; }
+            public string DepartureDate { get; set; }
+            public string ReturnDate { get; set; }
+            public Price Price { get; set; }
+        }
+
+        public class ApiResponse
+        {
+            public List<FlightDestination> Data { get; set; }
+        }
+
+
         public Form1()
         {
             InitializeComponent();
@@ -45,12 +68,7 @@ namespace CuCapuInNori
             tabControl1.SelectedIndex = 0;
         }
 
-/*
-        public class ApiResponse
-        {
-            public List<FlightDestination> Data { get; set; }
-        }
-*/
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -308,7 +326,7 @@ namespace CuCapuInNori
             }
         }
 
-        private void button5_Click_1(object sender, EventArgs e)
+        private async void button5_Click_1(object sender, EventArgs e)
         {
             try
             {
@@ -322,16 +340,39 @@ namespace CuCapuInNori
                     else
                     {
                         string plecare = comboBox1.SelectedItem.ToString();
-                        string [] plec=plecare.Split('(');
-                        plec[1]=plec[1].Trim(')');
+                        string[] plec = plecare.Split('(');
+                        plec[1] = plec[1].Trim(')');
                         MessageBox.Show(plec[1]);
                         string sosire = comboBox2.SelectedItem.ToString();
                         string[] sos = sosire.Split('(');
                         sos[1] = sos[1].Trim(')');
                         MessageBox.Show(sos[1]);
 
+                        DateTime dataPlecare = dateTimePicker1.Value;
+                        DateTime dataSosire = dateTimePicker2.Value;
+                        string dP = dataPlecare.Date.ToString("yyyy-MM-dd");
+                        string dS = dataSosire.Date.ToString("yyyy-MM-dd");
+
+
+                        string url = "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode="+plec[1]+"&destinationLocationCode="+sos[1]+"&departureDate="+dP+"&adults=1&max=2";
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "x33SVVczJQfbW4WgYRgHJuKnRseH");
+
+                        var response = await client.GetStringAsync(url);
+                        ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(response);
+
+                        foreach (var flight in apiResponse.Data)
+                        {
+                            Console.WriteLine($"Type: {flight.Type}, Origin: {flight.Origin}, Destination: {flight.Destination}");
+                            Console.WriteLine($"Departure Date: {flight.DepartureDate}, Return Date: {flight.ReturnDate}");
+                            Console.WriteLine($"Price: {flight.Price.Total}");
+                            Console.WriteLine();
+                            dataGridView1.Rows.Add(plec[1],dP,sos[1],dS, flight.Price.Total, "Cumpara");
+                            
+                        }
                     }
-                }
+               
+                    }
+                
                 if (con.State == ConnectionState.Open)
                     con.Close();
             }
@@ -342,6 +383,16 @@ namespace CuCapuInNori
                 Date.Error(ee);
 
             }
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void panel2_Paint(object sender, PaintEventArgs e)
