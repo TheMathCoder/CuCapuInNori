@@ -253,6 +253,8 @@ namespace CuCapuInNori
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboBox1.Items.Clear();
+            comboBox1.SelectedItem = null;
+            comboBox1.Text = "";
             try
             {
                 if (con.State == ConnectionState.Closed)
@@ -280,6 +282,8 @@ namespace CuCapuInNori
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboBox2.Items.Clear();
+            comboBox2.SelectedItem = null;
+            comboBox2.Text = "";
             try
             {
                 if (con.State == ConnectionState.Closed)
@@ -292,6 +296,42 @@ namespace CuCapuInNori
                 for (int i = 0; i < dt.Rows.Count; i++)
                     comboBox2.Items.Add(dt.Rows[i][1] + " (" + dt.Rows[i][0] + ")");
 
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+            catch (Exception ee)
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                Date.Error(ee);
+
+            }
+        }
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+
+                if (comboBox1.SelectedItem != null && comboBox2.SelectedItem != null && comboBox3.SelectedItem != null && comboBox4.SelectedItem != null)
+                {
+                    if (comboBox1.SelectedItem.ToString() == comboBox2.SelectedItem.ToString())
+                        throw new Exception("Aeroportul de plecare si de sosire nu pot sa coincida");
+                    else
+                    {
+                        string plecare = comboBox1.SelectedItem.ToString();
+                        string [] plec=plecare.Split('(');
+                        plec[1]=plec[1].Trim(')');
+                        MessageBox.Show(plec[1]);
+                        string sosire = comboBox2.SelectedItem.ToString();
+                        string[] sos = sosire.Split('(');
+                        sos[1] = sos[1].Trim(')');
+                        MessageBox.Show(sos[1]);
+
+                    }
+                }
                 if (con.State == ConnectionState.Open)
                     con.Close();
             }
