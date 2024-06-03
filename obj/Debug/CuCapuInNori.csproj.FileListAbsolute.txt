@@ -1,0 +1,15 @@
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.csproj.AssemblyReference.cache
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.CreareCont.resources
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.Form1.resources
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.Properties.Resources.resources
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.csproj.GenerateResource.cache
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.csproj.CoreCompileInputs.cache
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\bin\Debug\CuCapuInNori.exe.config
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\bin\Debug\CuCapuInNori.exe
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\bin\Debug\CuCapuInNori.pdb
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.exe
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.pdb
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.Logare.resources
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\bin\Debug\Newtonsoft.Json.dll
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\bin\Debug\Newtonsoft.Json.xml
+C:\Users\perha\source\repos\CuCapuInNori\CuCapuInNori\obj\Debug\CuCapuInNori.csproj.CopyComplete
