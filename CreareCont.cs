@@ -106,6 +106,9 @@ namespace CuCapuInNori
                                 cmd.Parameters.AddWithValue("@pre", textBox2.Text.ToString());
                                 cmd.Parameters.AddWithValue("@adr", textBox7.Text.ToString());
                                 cmd.ExecuteNonQuery();
+
+                                DialogResult = DialogResult.OK;
+                                this.Close();
                             }
                         }
                     }
@@ -120,6 +123,12 @@ namespace CuCapuInNori
                     con.Open();
                 Date.Error(ee);
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 

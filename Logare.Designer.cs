@@ -200,6 +200,7 @@ namespace CuCapuInNori
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Logare";
             this.Text = "CuCapuInNori - Logare";
+            this.Load += new System.EventHandler(this.Logare_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

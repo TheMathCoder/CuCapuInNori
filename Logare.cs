@@ -72,7 +72,11 @@ namespace CuCapuInNori
                 if (cate == 0)
                     throw new Exception("Email/parola gresite.");
                 else
-                    MessageBox.Show("Raul o are f mare!");
+                {
+                    DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+
                 if (con.State == ConnectionState.Open)
                     con.Close();
             }
@@ -98,7 +102,13 @@ namespace CuCapuInNori
 
         private void button3_Click(object sender, EventArgs e)
         {
+            
             this.Close();
+        }
+
+        private void Logare_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

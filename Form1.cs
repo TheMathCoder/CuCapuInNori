@@ -25,6 +25,7 @@ namespace CuCapuInNori
         int click = 0;
         int x1=0, x2=0, y1=0, y2=0;
         string token = "";
+        bool loggedIn = false;
 
         public async void getToken()
         {
@@ -104,6 +105,17 @@ namespace CuCapuInNori
             tabControl1.Appearance = TabAppearance.FlatButtons; tabControl1.ItemSize = new Size(0, 1); tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.SelectedIndex = 0;
             getToken();
+            if(loggedIn==true)
+            {
+                button3.Visible = true;
+                panel5.Visible = true;
+                button2.Visible = false;
+            }
+            else
+            {
+                button3.Visible = false;
+                panel5.Visible = false;
+            }
 
         }
 
@@ -144,8 +156,16 @@ namespace CuCapuInNori
         private void button2_Click(object sender, EventArgs e)
         {
             this.Hide();
-            new Logare().ShowDialog();
+            if (new Logare().ShowDialog() == DialogResult.OK)
+            {
+                loggedIn = true;
+                button3.Visible = true;
+                panel5.Visible = true;
+                button2.Visible = false;
+            }
+
             Show();
+            
         }
 
         private void panel3_MouseDown(object sender, MouseEventArgs e)
