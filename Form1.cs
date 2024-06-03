@@ -19,6 +19,8 @@ namespace CuCapuInNori
         HttpClient client = new HttpClient();
         SqlConnection con = new SqlConnection(Date.con);
         SqlCommand cmd;
+        SqlDataAdapter da = new SqlDataAdapter();
+        DataTable dt = new DataTable();
         int click = 0;
         int x1=0, x2=0, y1=0, y2=0;
         public Form1()
@@ -64,7 +66,7 @@ namespace CuCapuInNori
 
         private void button1_MouseHover(object sender, EventArgs e)
         {
-            
+
         }
 
         private void button1_MouseEnter(object sender, EventArgs e)
@@ -226,6 +228,80 @@ namespace CuCapuInNori
             {
                 Date.Error(ee);
             }*/
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(tabControl1.SelectedIndex == 1)
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                cmd = new SqlCommand("select taraAeroport from aeroporturi group by taraAeroport order by 1 asc ", con);
+                da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                    comboBox3.Items.Add(dt.Rows[i][0].ToString());
+                for (int i = 0; i < dt.Rows.Count; i++)
+                    comboBox4.Items.Add(dt.Rows[i][0].ToString());
+                if (comboBox3.SelectedItem == "")
+                    comboBox1.Enabled = false;
+
+            }
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox1.Items.Clear();
+            try
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                cmd = new SqlCommand("select codaeroport,orasaeroport from aeroporturi where taraaeroport=@tara", con);
+                cmd.Parameters.AddWithValue("@tara", comboBox3.Items[comboBox3.SelectedIndex].ToString());
+                da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                    comboBox1.Items.Add(dt.Rows[i][1] + " (" + dt.Rows[i][0] + ")");
+
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+            catch(Exception ee)
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                Date.Error(ee);
+
+            }
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox2.Items.Clear();
+            try
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                cmd = new SqlCommand("select codaeroport,orasaeroport from aeroporturi where taraaeroport=@tara", con);
+                cmd.Parameters.AddWithValue("@tara", comboBox4.Items[comboBox4.SelectedIndex].ToString());
+                da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                    comboBox2.Items.Add(dt.Rows[i][1] + " (" + dt.Rows[i][0] + ")");
+
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+            catch (Exception ee)
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                Date.Error(ee);
+
+            }
         }
 
         private void panel2_Paint(object sender, PaintEventArgs e)
