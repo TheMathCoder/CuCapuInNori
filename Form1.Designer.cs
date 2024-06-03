@@ -63,7 +63,6 @@ namespace CuCapuInNori
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button5 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -232,7 +231,6 @@ namespace CuCapuInNori
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(30)))), ((int)(((byte)(60)))));
-            this.tabPage1.Controls.Add(this.button5);
             this.tabPage1.Controls.Add(this.button6);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -415,15 +413,6 @@ namespace CuCapuInNori
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 0;
             // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(530, 371);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(143, 65);
-            this.button5.TabIndex = 1;
-            this.button5.Text = "button5";
-            this.button5.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -489,7 +478,6 @@ namespace CuCapuInNori
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel9;
         private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button5;
     }
 }
 
