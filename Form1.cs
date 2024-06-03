@@ -145,6 +145,7 @@ namespace CuCapuInNori
         private void button6_Click(object sender, EventArgs e)
         {
             tabControl1.SelectedIndex = 1;
+            //salut
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
