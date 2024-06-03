@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CuCapuInNori
 {
@@ -23,6 +24,42 @@ namespace CuCapuInNori
         DataTable dt = new DataTable();
         int click = 0;
         int x1=0, x2=0, y1=0, y2=0;
+        string token = "";
+
+        public async void getToken()
+        {
+            string url = "https://test.api.amadeus.com/v1/security/oauth2/token";
+            var formData = new Dictionary<string, string>
+            {
+            { "grant_type", "client_credentials" },
+            { "client_id", "lRZyM7Bb4OjzNe2unkOIWRm2RqW9AfAR" },
+            { "client_secret", "SkSuQ45ImcdYJI2S" }
+             };
+            string rasp;
+
+            using (HttpClient client = new HttpClient())
+            {
+
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+
+
+                HttpContent content = new FormUrlEncodedContent(formData);
+
+
+                HttpResponseMessage response = await client.PostAsync(url, content);
+
+
+                response.EnsureSuccessStatusCode();
+
+
+                string responseContent = await response.Content.ReadAsStringAsync();
+               
+                var jsonObject = JObject.Parse(responseContent);
+                rasp = jsonObject["access_token"].ToString();
+            }
+
+            token = rasp;
+        }
 
 
         public class Price
@@ -66,6 +103,8 @@ namespace CuCapuInNori
             }
             tabControl1.Appearance = TabAppearance.FlatButtons; tabControl1.ItemSize = new Size(0, 1); tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.SelectedIndex = 0;
+            getToken();
+
         }
 
 
@@ -264,6 +303,10 @@ namespace CuCapuInNori
                     comboBox4.Items.Add(dt.Rows[i][0].ToString());
                 if (comboBox3.SelectedItem == "")
                     comboBox1.Enabled = false;
+                for (int i = 0; i < 7; i++)
+                    comboBox5.Items.Add(i);
+                for (int i = 0; i < 7; i++)
+                    comboBox6.Items.Add(i);
 
             }
         }
@@ -330,8 +373,10 @@ namespace CuCapuInNori
         {
             try
             {
+                double lastprice=999999;
                 if (con.State == ConnectionState.Closed)
                     con.Open();
+                dataGridView1.Rows.Clear();
 
                 if (comboBox1.SelectedItem != null && comboBox2.SelectedItem != null && comboBox3.SelectedItem != null && comboBox4.SelectedItem != null)
                 {
@@ -354,20 +399,23 @@ namespace CuCapuInNori
                         string dS = dataSosire.Date.ToString("yyyy-MM-dd");
 
 
-                        string url = "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode="+plec[1]+"&destinationLocationCode="+sos[1]+"&departureDate="+dP+"&adults=1&max=2";
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "x33SVVczJQfbW4WgYRgHJuKnRseH");
+                        string url = "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode="+plec[1]+"&destinationLocationCode="+sos[1]+"&departureDate="+dP+"&adults="+comboBox5.SelectedItem.ToString()+"&children="+comboBox6.SelectedIndex.ToString()+"&max=10";
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                         var response = await client.GetStringAsync(url);
                         ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(response);
-
+                        
                         foreach (var flight in apiResponse.Data)
                         {
                             Console.WriteLine($"Type: {flight.Type}, Origin: {flight.Origin}, Destination: {flight.Destination}");
                             Console.WriteLine($"Departure Date: {flight.DepartureDate}, Return Date: {flight.ReturnDate}");
                             Console.WriteLine($"Price: {flight.Price.Total}");
                             Console.WriteLine();
-                            dataGridView1.Rows.Add(plec[1],dP,sos[1],dS, flight.Price.Total, "Cumpara");
-                            
+                            if(lastprice!= double.Parse(flight.Price.Total))
+                            dataGridView1.Rows.Add(comboBox1.SelectedItem.ToString(),dP, comboBox2.SelectedItem.ToString(), dS, flight.Price.Total, "Cumpara");
+                            lastprice = double.Parse(flight.Price.Total);
+
+
                         }
                     }
                
