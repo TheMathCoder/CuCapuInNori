@@ -412,7 +412,7 @@ namespace CuCapuInNori
                         string[] sos = sosire.Split('(');
                         sos[1] = sos[1].Trim(')');
                         MessageBox.Show(sos[1]);
-                        //salut
+                        //salu
                         DateTime dataPlecare = dateTimePicker1.Value;
                         DateTime dataSosire = dateTimePicker2.Value;
                         string dP = dataPlecare.Date.ToString("yyyy-MM-dd");
