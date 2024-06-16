@@ -568,6 +568,35 @@ namespace CuCapuInNori
             }
         }
 
+        private async void button8_ClickAsync(object sender, EventArgs e)
+        {
+            try
+            {
+                string url = "https://test.api.amadeus.com/v1/shopping/flight-destinations?origin=PAR&maxPrice=200";
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetStringAsync(url);
+                ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(response);
+
+                foreach (var flight in apiResponse.Data)
+                {
+                    Console.WriteLine($"Type: {flight.Type}, Origin: {flight.Origin}, Destination: {flight.Destination}");
+                    Console.WriteLine($"Departure Date: {flight.DepartureDate}, Return Date: {flight.ReturnDate}");
+                    Console.WriteLine($"Price: {flight.Price.Total}");
+                    Console.WriteLine();
+                }
+            }
+            catch (Exception ee)
+            {
+                Date.Error(ee);
+            }
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            tabControl1.SelectedIndex = 0;
+        }
+
         private void panel2_Paint(object sender, PaintEventArgs e)
         {
 

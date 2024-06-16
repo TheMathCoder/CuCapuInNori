@@ -62,6 +62,7 @@ namespace CuCapuInNori
             this.Column15 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label17 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.button8 = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
             this.comboBox8 = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -203,6 +204,7 @@ namespace CuCapuInNori
             this.button3.TabIndex = 10;
             this.button3.Text = "Bilete";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click_1);
             // 
             // pictureBox2
             // 
@@ -423,6 +425,7 @@ namespace CuCapuInNori
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(30)))), ((int)(((byte)(60)))));
+            this.tabPage2.Controls.Add(this.button8);
             this.tabPage2.Controls.Add(this.label16);
             this.tabPage2.Controls.Add(this.comboBox8);
             this.tabPage2.Controls.Add(this.label15);
@@ -456,6 +459,16 @@ namespace CuCapuInNori
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(795, 217);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(155, 53);
+            this.button8.TabIndex = 27;
+            this.button8.Text = "Cauta zbor";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_ClickAsync);
             // 
             // label16
             // 
@@ -878,6 +891,7 @@ namespace CuCapuInNori
         private System.Windows.Forms.Panel panel9;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
     }
 }
 
