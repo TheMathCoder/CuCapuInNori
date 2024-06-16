@@ -26,6 +26,7 @@ namespace CuCapuInNori
         int x1=0, x2=0, y1=0, y2=0;
         string token = "";
         bool loggedIn = false;
+        int loggedId=0;
 
         public async void getToken()
         {
@@ -92,7 +93,7 @@ namespace CuCapuInNori
                 if (con.State == ConnectionState.Closed)
                     con.Open();
                 cmd = new SqlCommand("truncate table useri", con);
-                cmd.ExecuteNonQuery();
+          //      cmd.ExecuteNonQuery();
                 if (con.State == ConnectionState.Open)
                     con.Close();
             }
@@ -115,6 +116,8 @@ namespace CuCapuInNori
             {
                 button3.Visible = false;
                 panel5.Visible = false;
+                label13.Visible = false;
+                button2.Visible = true;
             }
 
         }
@@ -124,6 +127,8 @@ namespace CuCapuInNori
         {
 
             pictureBox1.Image = Image.FromFile(Date.folder + "icon.png");
+            label13.Visible = false;
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -162,6 +167,21 @@ namespace CuCapuInNori
                 button3.Visible = true;
                 panel5.Visible = true;
                 button2.Visible = false;
+                cmd = new SqlCommand("select iduser from useri where isonline=1", con);
+                da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+                loggedId = int.Parse(dt.Rows[0][0].ToString());
+                cmd = new SqlCommand("select nume, prenume from useri where iduser=@id", con);
+                cmd.Parameters.Add("@id", loggedId);
+                da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+                label13.Text = dt.Rows[0][0].ToString() + " " + dt.Rows[0][1].ToString();
+                label13.Size = new Size(40 - int.Parse(label13.Text.Length.ToString()), 30 - int.Parse(label13.Text.Length.ToString()));
+                label13.Visible = true;
+                button2.Visible = false;
+
             }
 
             Show();
@@ -323,10 +343,18 @@ namespace CuCapuInNori
                     comboBox4.Items.Add(dt.Rows[i][0].ToString());
                 if (comboBox3.SelectedItem == "")
                     comboBox1.Enabled = false;
-                for (int i = 0; i < 7; i++)
+                for (int i = 1; i < 7; i++)
                     comboBox5.Items.Add(i);
                 for (int i = 0; i < 7; i++)
                     comboBox6.Items.Add(i);
+                comboBox7.Items.Add("ECONOMY");
+                comboBox7.Items.Add("PREMIUM_ECONOMY");
+                comboBox7.Items.Add("BUSINESS");
+                comboBox7.Items.Add("FIRST");
+                comboBox8.Items.Add("RON");
+                comboBox8.Items.Add("EUR");
+                comboBox8.Items.Add("USD");
+
 
             }
         }
@@ -398,7 +426,7 @@ namespace CuCapuInNori
                     con.Open();
                 dataGridView1.Rows.Clear();
 
-                if (comboBox1.SelectedItem != null && comboBox2.SelectedItem != null && comboBox3.SelectedItem != null && comboBox4.SelectedItem != null)
+                if (comboBox1.SelectedItem != null && comboBox2.SelectedItem != null && comboBox3.SelectedItem != null && comboBox4.SelectedItem != null && comboBox5.SelectedItem != null && comboBox6.SelectedItem != null && comboBox7.SelectedItem != null && comboBox8.SelectedItem != null)
                 {
                     if (comboBox1.SelectedItem.ToString() == comboBox2.SelectedItem.ToString())
                         throw new Exception("Aeroportul de plecare si de sosire nu pot sa coincida");
@@ -412,14 +440,13 @@ namespace CuCapuInNori
                         string[] sos = sosire.Split('(');
                         sos[1] = sos[1].Trim(')');
                         MessageBox.Show(sos[1]);
-                        //salusdds
                         DateTime dataPlecare = dateTimePicker1.Value;
                         DateTime dataSosire = dateTimePicker2.Value;
                         string dP = dataPlecare.Date.ToString("yyyy-MM-dd");
                         string dS = dataSosire.Date.ToString("yyyy-MM-dd");
 
 
-                        string url = "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode="+plec[1]+"&destinationLocationCode="+sos[1]+"&departureDate="+dP+"&adults="+comboBox5.SelectedItem.ToString()+"&children="+comboBox6.SelectedIndex.ToString()+"&max=10";
+                        string url = "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode="+plec[1]+"&destinationLocationCode="+sos[1]+"&departureDate="+dP+"&adults="+comboBox5.SelectedItem.ToString()+"&children="+comboBox6.SelectedIndex.ToString()+ "&max=10&travelClass=" + comboBox7.SelectedItem.ToString()+ "&currencyCode=" + comboBox8.SelectedItem.ToString();
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                         var response = await client.GetStringAsync(url);
@@ -459,6 +486,43 @@ namespace CuCapuInNori
         }
 
         private void tabPage2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabPage1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                if (e.ColumnIndex == 5)
+                {
+                    if (loggedIn == true)
+                    {
+                        if (MessageBox.Show("Esti sigur ca vrei sa cumperi biletul pentru suma de: " + dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString(), "Cumparare bilet", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes && dataGridView1.RowCount != null)
+                        {
+                            cmd = new SqlCommand("",con);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Pentru a cumpara un bilet trebuie sa va logati.");
+                    }
+                    }
+                }
+            catch (Exception ee)
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                Date.Error(ee);
+            }
+        }
+
+        private void button6_Click_1(object sender, EventArgs e)
         {
 
         }

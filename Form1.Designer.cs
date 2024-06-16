@@ -32,10 +32,11 @@ namespace CuCapuInNori
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.label13 = new System.Windows.Forms.Label();
+            this.panel6 = new System.Windows.Forms.Panel();
             this.button3 = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.panel8 = new System.Windows.Forms.Panel();
-            this.panel6 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.button4 = new System.Windows.Forms.Button();
@@ -46,6 +47,11 @@ namespace CuCapuInNori
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
+            this.comboBox8 = new System.Windows.Forms.ComboBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.comboBox7 = new System.Windows.Forms.ComboBox();
+            this.label14 = new System.Windows.Forms.Label();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
             this.comboBox6 = new System.Windows.Forms.ComboBox();
@@ -90,8 +96,9 @@ namespace CuCapuInNori
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(30)))), ((int)(((byte)(50)))));
-            this.panel1.Controls.Add(this.panel6);
             this.panel1.Controls.Add(this.panel5);
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.panel6);
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.pictureBox2);
             this.panel1.Controls.Add(this.panel8);
@@ -113,6 +120,25 @@ namespace CuCapuInNori
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(1223, 5);
             this.panel5.TabIndex = 8;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
+            this.label13.Location = new System.Drawing.Point(43, 161);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(86, 29);
+            this.label13.TabIndex = 12;
+            this.label13.Text = "Salut, ";
+            // 
+            // panel6
+            // 
+            this.panel6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
+            this.panel6.Location = new System.Drawing.Point(0, 260);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(1223, 5);
+            this.panel6.TabIndex = 7;
             // 
             // button3
             // 
@@ -144,14 +170,6 @@ namespace CuCapuInNori
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(1223, 5);
             this.panel8.TabIndex = 8;
-            // 
-            // panel6
-            // 
-            this.panel6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
-            this.panel6.Location = new System.Drawing.Point(0, 260);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1223, 5);
-            this.panel6.TabIndex = 7;
             // 
             // panel4
             // 
@@ -262,10 +280,16 @@ namespace CuCapuInNori
             this.tabPage1.Size = new System.Drawing.Size(1013, 671);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
+            this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click_1);
             // 
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(30)))), ((int)(((byte)(60)))));
+            this.tabPage2.Controls.Add(this.label16);
+            this.tabPage2.Controls.Add(this.comboBox8);
+            this.tabPage2.Controls.Add(this.label15);
+            this.tabPage2.Controls.Add(this.comboBox7);
+            this.tabPage2.Controls.Add(this.label14);
             this.tabPage2.Controls.Add(this.comboBox5);
             this.tabPage2.Controls.Add(this.label11);
             this.tabPage2.Controls.Add(this.comboBox6);
@@ -295,10 +319,57 @@ namespace CuCapuInNori
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
+            this.label16.Location = new System.Drawing.Point(479, 269);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(40, 13);
+            this.label16.TabIndex = 26;
+            this.label16.Text = "Valuta:";
+            // 
+            // comboBox8
+            // 
+            this.comboBox8.FormattingEnabled = true;
+            this.comboBox8.Location = new System.Drawing.Point(542, 264);
+            this.comboBox8.Name = "comboBox8";
+            this.comboBox8.Size = new System.Drawing.Size(145, 21);
+            this.comboBox8.TabIndex = 25;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
+            this.label15.Location = new System.Drawing.Point(479, 237);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(36, 13);
+            this.label15.TabIndex = 24;
+            this.label15.Text = "Clasa:";
+            // 
+            // comboBox7
+            // 
+            this.comboBox7.FormattingEnabled = true;
+            this.comboBox7.Location = new System.Drawing.Point(542, 232);
+            this.comboBox7.Name = "comboBox7";
+            this.comboBox7.Size = new System.Drawing.Size(145, 21);
+            this.comboBox7.TabIndex = 23;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
+            this.label14.Location = new System.Drawing.Point(536, 188);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(107, 31);
+            this.label14.TabIndex = 22;
+            this.label14.Text = "Optiuni";
+            // 
             // comboBox5
             // 
             this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Location = new System.Drawing.Point(156, 206);
+            this.comboBox5.Location = new System.Drawing.Point(154, 237);
             this.comboBox5.Name = "comboBox5";
             this.comboBox5.Size = new System.Drawing.Size(145, 21);
             this.comboBox5.TabIndex = 21;
@@ -307,7 +378,7 @@ namespace CuCapuInNori
             // 
             this.label11.AutoSize = true;
             this.label11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
-            this.label11.Location = new System.Drawing.Point(82, 209);
+            this.label11.Location = new System.Drawing.Point(80, 240);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(36, 13);
             this.label11.TabIndex = 20;
@@ -316,7 +387,7 @@ namespace CuCapuInNori
             // comboBox6
             // 
             this.comboBox6.FormattingEnabled = true;
-            this.comboBox6.Location = new System.Drawing.Point(156, 233);
+            this.comboBox6.Location = new System.Drawing.Point(154, 264);
             this.comboBox6.Name = "comboBox6";
             this.comboBox6.Size = new System.Drawing.Size(145, 21);
             this.comboBox6.TabIndex = 19;
@@ -325,7 +396,7 @@ namespace CuCapuInNori
             // 
             this.label12.AutoSize = true;
             this.label12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
-            this.label12.Location = new System.Drawing.Point(82, 236);
+            this.label12.Location = new System.Drawing.Point(80, 267);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(33, 13);
             this.label12.TabIndex = 18;
@@ -336,7 +407,7 @@ namespace CuCapuInNori
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
-            this.label10.Location = new System.Drawing.Point(150, 160);
+            this.label10.Location = new System.Drawing.Point(148, 191);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(129, 31);
             this.label10.TabIndex = 17;
@@ -417,6 +488,7 @@ namespace CuCapuInNori
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(802, 219);
             this.dataGridView1.TabIndex = 10;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
             // Column1
             // 
@@ -450,7 +522,7 @@ namespace CuCapuInNori
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(811, 76);
+            this.button5.Location = new System.Drawing.Point(814, 132);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(155, 53);
             this.button5.TabIndex = 9;
@@ -460,7 +532,7 @@ namespace CuCapuInNori
             // 
             // dateTimePicker2
             // 
-            this.dateTimePicker2.Location = new System.Drawing.Point(544, 121);
+            this.dateTimePicker2.Location = new System.Drawing.Point(154, 157);
             this.dateTimePicker2.Name = "dateTimePicker2";
             this.dateTimePicker2.Size = new System.Drawing.Size(200, 20);
             this.dateTimePicker2.TabIndex = 8;
@@ -492,11 +564,11 @@ namespace CuCapuInNori
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
-            this.label4.Location = new System.Drawing.Point(467, 121);
+            this.label4.Location = new System.Drawing.Point(65, 162);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(63, 13);
+            this.label4.Size = new System.Drawing.Size(83, 13);
             this.label4.TabIndex = 4;
-            this.label4.Text = "Data sosire:";
+            this.label4.Text = "Data intoarcere:";
             // 
             // label5
             // 
@@ -580,6 +652,7 @@ namespace CuCapuInNori
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.tabControl1.ResumeLayout(false);
@@ -643,6 +716,12 @@ namespace CuCapuInNori
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.ComboBox comboBox6;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox comboBox7;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.ComboBox comboBox8;
     }
 }
 

@@ -73,8 +73,59 @@ namespace CuCapuInNori
                     throw new Exception("Email/parola gresite.");
                 else
                 {
-                    DialogResult = DialogResult.OK;
-                    this.Close();
+                    cmd = new SqlCommand("select count(*) from useri where email=@mail and parola=@pass and isvalidated=1", con);
+                    cmd.Parameters.AddWithValue("@mail", textBox1.Text.ToString());
+                    cmd.Parameters.AddWithValue("@pass", pass);
+                    int valid = (int)cmd.ExecuteScalar();
+                    if (valid == 1)
+                    {
+                        cmd = new SqlCommand("update useri set isonline=1 where email=@email", con);
+                        cmd.Parameters.AddWithValue("@email", textBox1.Text.ToString());
+                        cmd.ExecuteNonQuery();
+                        DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                    else
+                    {
+                        if (label4.Visible == false)
+                        {
+                            MessageBox.Show("Contul tau nu este activat. In momentul inregistrarii ai primit un cod de validare pe mail. Introdu-l in casuta de mai jos.");
+                            textBox3.Visible = true;
+                            label4.Visible = true;
+                            panel6.Visible = true;
+                        }
+                        else if (textBox3.Text.ToString().Length < 4)
+                        {
+                            Date.Error("Introdu un cod valid de 4 cifre.");
+                        }
+                        else
+                        {
+                            cmd = new SqlCommand("select codvalidare from verificari where iduser = (select iduser from useri where email=@email)", con);
+                            cmd.Parameters.AddWithValue("@email", textBox1.Text.ToString());
+                            SqlDataAdapter da = new SqlDataAdapter(cmd);
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+                            if(dt.Rows[0][0].ToString() == textBox3.Text.ToString())
+                            {
+                                cmd = new SqlCommand("delete from verificari where iduser = (select iduser from useri where email=@email)",con);
+                                cmd.Parameters.AddWithValue("@email", textBox1.Text.ToString());
+                                cmd.ExecuteNonQuery();
+                                cmd = new SqlCommand("update useri set isvalidated=1 where iduser = (select iduser from useri where email=@email)", con);
+                                cmd.Parameters.AddWithValue("@email", textBox1.Text.ToString());
+                                cmd.ExecuteNonQuery();
+                                MessageBox.Show("Contul tau a fost validat cu succes!");
+                                DialogResult = DialogResult.OK;
+                                label4.Visible = false;
+                                textBox3.Visible = false;
+                                panel6.Visible = false;
+                                this.Close();
+                            }
+                            else
+                            {
+                                Date.Error("Codul introdus este incorect.");
+                            }
+                        }
+                    }
                 }
 
                 if (con.State == ConnectionState.Open)
@@ -107,6 +158,23 @@ namespace CuCapuInNori
         }
 
         private void Logare_Load(object sender, EventArgs e)
+        {
+            label4.Visible = false;
+            textBox3.Visible = false;
+            panel6.Visible = false;
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel6_Paint(object sender, PaintEventArgs e)
         {
 
         }

@@ -42,6 +42,9 @@ namespace CuCapuInNori
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.button3 = new System.Windows.Forms.Button();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -74,6 +77,7 @@ namespace CuCapuInNori
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(183, 20);
             this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "raul4life14@gmail.com";
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // textBox2
@@ -87,6 +91,7 @@ namespace CuCapuInNori
             this.textBox2.PasswordChar = '*';
             this.textBox2.Size = new System.Drawing.Size(183, 20);
             this.textBox2.TabIndex = 3;
+            this.textBox2.Text = "asdasdasd";
             // 
             // button1
             // 
@@ -178,13 +183,48 @@ namespace CuCapuInNori
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // panel6
+            // 
+            this.panel6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
+            this.panel6.Location = new System.Drawing.Point(170, 202);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(74, 5);
+            this.panel6.TabIndex = 11;
+            this.panel6.Paint += new System.Windows.Forms.PaintEventHandler(this.panel6_Paint);
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(30)))), ((int)(((byte)(60)))));
+            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(176)))), ((int)(((byte)(110)))));
+            this.textBox3.Location = new System.Drawing.Point(170, 177);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(74, 30);
+            this.textBox3.TabIndex = 10;
+            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(236)))), ((int)(((byte)(180)))));
+            this.label4.Location = new System.Drawing.Point(85, 188);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(26, 13);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Cod";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // 
             // Logare
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(30)))), ((int)(((byte)(60)))));
             this.ClientSize = new System.Drawing.Size(483, 352);
+            this.Controls.Add(this.panel6);
+            this.Controls.Add(this.textBox3);
             this.Controls.Add(this.button3);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.label3);
@@ -221,5 +261,8 @@ namespace CuCapuInNori
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label4;
     }
 }

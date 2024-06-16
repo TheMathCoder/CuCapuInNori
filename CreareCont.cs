@@ -10,7 +10,8 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Net.Mail;
 using System.Security.Cryptography;
-
+using System.Net;
+using System.Net.Mime;
 
 namespace CuCapuInNori
 {
@@ -19,6 +20,7 @@ namespace CuCapuInNori
         SqlConnection con = new SqlConnection(Date.con);
         SqlCommand cmd;
         bool valid = true;
+        Random r = new Random();
         public CreareCont()
         {
             InitializeComponent();
@@ -63,7 +65,29 @@ namespace CuCapuInNori
             return sb.ToString();
         }
 
+        public void sendMail(string subiect, string mesaj, string mailaddr,string cod)
+        {
+            using (MailMessage mail = new MailMessage())
+            {
+                mail.From = new MailAddress("themathcoder04@gmail.com");
+                mail.To.Add(mailaddr);
+                mail.Subject = subiect;
+                LinkedResource res = new LinkedResource(Date.folder + "logo.png",MediaTypeNames.Image.Jpeg);
+                res.ContentId = Guid.NewGuid().ToString();
+                string htmlBody =  @"<img src='cid:" + res.ContentId + @"'/>" + @"<h1>" + mesaj + @"</h1>" + @"<br />" + @"<h2> Iti multumim pentru ca ai ales aplicatia noastra. Te vei putea conecta cu contul tau dupa ce il activezi. Pentru a activa contul, logheaza-te cu datele tale si in casuta care apare, introdu codul de mai jos: </h2> <br /> <h1>" + cod + @"</h1>";
+                AlternateView alternateView = AlternateView.CreateAlternateViewFromString(htmlBody, Encoding.UTF8, MediaTypeNames.Text.Html);
+                alternateView.LinkedResources.Add(res);
+                mail.AlternateViews.Add(alternateView);
+                mail.IsBodyHtml = true;
 
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new NetworkCredential("themathcoder04@gmail.com", "darw qcoe pvhg trgd");
+                    smtp.EnableSsl = true;
+                    smtp.Send(mail);
+                }
+            }
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             try
@@ -106,7 +130,13 @@ namespace CuCapuInNori
                                 cmd.Parameters.AddWithValue("@pre", textBox2.Text.ToString());
                                 cmd.Parameters.AddWithValue("@adr", textBox7.Text.ToString());
                                 cmd.ExecuteNonQuery();
-
+                                
+                                cmd = new SqlCommand("insert into verificari (iduser,codvalidare) values((select iduser from useri where email=@email),@codvalidare)", con);
+                                cmd.Parameters.AddWithValue("@email", textBox3.Text.ToString());
+                                string cod = r.Next(1000, 9999).ToString();
+                                cmd.Parameters.AddWithValue("@codvalidare", cod);
+                                cmd.ExecuteNonQuery();
+                                sendMail("Confirmare creare cont", "Salut, " + textBox1.Text.ToString() + "." + " Contul tau pe aplicatia CuCapuInNori a fost creat cu succes! ", textBox3.Text.ToString(),cod);
                                 DialogResult = DialogResult.OK;
                                 this.Close();
                             }
