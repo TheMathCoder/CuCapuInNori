@@ -21,6 +21,8 @@ namespace CuCapuInNori
         SqlCommand cmd;
         bool valid = true;
         Random r = new Random();
+        int see = 0;
+        int see2 = 0;
         public CreareCont()
         {
             InitializeComponent();
@@ -159,6 +161,38 @@ namespace CuCapuInNori
         {
             DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (see == 0)
+            {
+                see++;
+                textBox5.PasswordChar = '\0';
+                button2.BackgroundImage = Image.FromFile(Date.folder + "hide.png");
+            }
+            else
+            {
+                see--;
+                textBox5.PasswordChar = '*';
+                button2.BackgroundImage = Image.FromFile(Date.folder + "see.png");
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (see2 == 0)
+            {
+                see2++;
+                textBox4.PasswordChar = '\0';
+                button4.BackgroundImage = Image.FromFile(Date.folder + "hide.png");
+            }
+            else
+            {
+                see2--;
+                textBox4.PasswordChar = '*';
+                button4.BackgroundImage = Image.FromFile(Date.folder + "see.png");
+            }
         }
     }
 

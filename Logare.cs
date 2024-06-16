@@ -18,6 +18,7 @@ namespace CuCapuInNori
         SqlConnection con = new SqlConnection(Date.con);
         SqlCommand cmd;
         bool valid = true;
+        int see = 0;
         public Logare()
         {
             InitializeComponent();
@@ -176,6 +177,23 @@ namespace CuCapuInNori
 
         private void panel6_Paint(object sender, PaintEventArgs e)
         {
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (see == 0)
+            {
+                see++;
+                textBox2.PasswordChar = '\0';
+                button4.BackgroundImage = Image.FromFile(Date.folder + "hide.png");
+            }
+            else
+            {
+                see--;
+                textBox2.PasswordChar = '*';
+                button4.BackgroundImage = Image.FromFile(Date.folder + "see.png");
+            }
 
         }
     }

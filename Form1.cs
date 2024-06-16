@@ -111,6 +111,9 @@ namespace CuCapuInNori
                 button3.Visible = true;
                 panel5.Visible = true;
                 button2.Visible = false;
+                panel9.Visible = false;
+                panel7.Visible = false;
+                button7.Visible = false;
             }
             else
             {
@@ -118,6 +121,9 @@ namespace CuCapuInNori
                 panel5.Visible = false;
                 label13.Visible = false;
                 button2.Visible = true;
+                panel9.Visible = true;
+                panel7.Visible = true;
+                button7.Visible = true;
             }
 
         }
@@ -128,6 +134,9 @@ namespace CuCapuInNori
 
             pictureBox1.Image = Image.FromFile(Date.folder + "icon.png");
             label13.Visible = false;
+            panel9.Visible = false;
+            panel7.Visible = false;
+            button7.Visible = false;
 
         }
 
@@ -181,6 +190,9 @@ namespace CuCapuInNori
                 label13.Size = new Size(40 - int.Parse(label13.Text.Length.ToString()), 30 - int.Parse(label13.Text.Length.ToString()));
                 label13.Visible = true;
                 button2.Visible = false;
+                panel9.Visible = true;
+                panel7.Visible = true;
+                button7.Visible = true;
 
             }
 
@@ -454,10 +466,6 @@ namespace CuCapuInNori
                         
                         foreach (var flight in apiResponse.Data)
                         {
-                            Console.WriteLine($"Type: {flight.Type}, Origin: {flight.Origin}, Destination: {flight.Destination}");
-                            Console.WriteLine($"Departure Date: {flight.DepartureDate}, Return Date: {flight.ReturnDate}");
-                            Console.WriteLine($"Price: {flight.Price.Total}");
-                            Console.WriteLine();
                             if(lastprice!= double.Parse(flight.Price.Total))
                             dataGridView1.Rows.Add(comboBox1.SelectedItem.ToString(),dP, comboBox2.SelectedItem.ToString(), dS, flight.Price.Total, "Cumpara");
                             lastprice = double.Parse(flight.Price.Total);
@@ -505,7 +513,25 @@ namespace CuCapuInNori
                     {
                         if (MessageBox.Show("Esti sigur ca vrei sa cumperi biletul pentru suma de: " + dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString(), "Cumparare bilet", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes && dataGridView1.RowCount != null)
                         {
-                            cmd = new SqlCommand("",con);
+                            string plecare = comboBox1.SelectedItem.ToString();
+                            string[] plec = plecare.Split('(');
+                            Random r = new Random();
+                            plec[1] = plec[1].Trim(')');
+                            string sosire = comboBox2.SelectedItem.ToString();
+                            string[] sos = sosire.Split('(');
+                            sos[1] = sos[1].Trim(')');
+                            if (con.State == ConnectionState.Closed)
+                                con.Open();
+                            cmd = new SqlCommand("insert into bilete(iduser,codzbor,idlinieaeriana,orasplecare,orassosire,dataplecare,datasosire,pret)values(@idu,@cz,@idla,@orasplecare,@orassosire,@dataplecare,@datasosire,@pret)",con);
+                            cmd.Parameters.AddWithValue("@cz", plec[1] + sos[1] + r.Next(10000,99999).ToString());
+                            cmd.Parameters.AddWithValue("@idla", plec[1] + sos[1]);
+                            cmd.Parameters.AddWithValue("@orasplecare", dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                            cmd.Parameters.AddWithValue("@orassosire", dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString());
+                            cmd.Parameters.AddWithValue("@dataplecare", dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString());
+                            cmd.Parameters.AddWithValue("@datasosire", dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString());
+                            cmd.Parameters.AddWithValue("@pret", dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString());
+                            cmd.Parameters.AddWithValue("@idu", loggedId);
+                            cmd.ExecuteNonQuery();
                         }
                     }
                     else
@@ -525,6 +551,21 @@ namespace CuCapuInNori
         private void button6_Click_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            loggedId = -1;
+            loggedIn = false;
+            {
+                panel9.Visible = false;
+                panel7.Visible = false;
+                button7.Visible = false;
+                button3.Visible = false;
+                panel5.Visible = false;
+                label13.Visible = false;
+                button2.Visible = true;
+            }
         }
 
         private void panel2_Paint(object sender, PaintEventArgs e)
