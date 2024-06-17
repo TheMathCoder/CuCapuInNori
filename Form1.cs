@@ -12,6 +12,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Mail;
+using System.Net.Mime;
+using System.Net;
 
 namespace CuCapuInNori
 {
@@ -27,7 +30,10 @@ namespace CuCapuInNori
         string token = "";
         bool loggedIn = false;
         int loggedId=0;
-
+        int dusintors = 0;
+        int zbordirect = 0;
+        ApiResponse apiResponse;
+        string lastdate;
         public async void getToken()
         {
             string url = "https://test.api.amadeus.com/v1/security/oauth2/token";
@@ -69,13 +75,39 @@ namespace CuCapuInNori
             public string Total { get; set; }
         }
 
+        public class Departure
+        {
+            public string IataCode { get; set; }
+            public string Terminal { get; set; }
+            public DateTime At { get; set; }
+        }
+
+        public class Arrival
+        {
+            public string IataCode { get; set; }
+            public string Terminal { get; set; }
+            public DateTime At { get; set; }
+        }
+
+        public class Segment
+        {
+            public Departure Departure { get; set; }
+            public Arrival Arrival { get; set; }
+            public string CarrierCode { get; set; }
+            public string Number { get; set; }
+            public string Duration { get; set; }
+        }
+
+        public class Itinerary
+        {
+            public string Duration { get; set; }
+            public List<Segment> Segments { get; set; }
+        }
+
         public class FlightDestination
         {
             public string Type { get; set; }
-            public string Origin { get; set; }
-            public string Destination { get; set; }
-            public string DepartureDate { get; set; }
-            public string ReturnDate { get; set; }
+            public List<Itinerary> Itineraries { get; set; }
             public Price Price { get; set; }
         }
 
@@ -83,7 +115,6 @@ namespace CuCapuInNori
         {
             public List<FlightDestination> Data { get; set; }
         }
-
 
         public Form1()
         {
@@ -104,7 +135,7 @@ namespace CuCapuInNori
                 Date.Error(ee);
             }
             tabControl1.Appearance = TabAppearance.FlatButtons; tabControl1.ItemSize = new Size(0, 1); tabControl1.SizeMode = TabSizeMode.Fixed;
-            tabControl1.SelectedIndex = 0;
+            tabControl1.SelectedIndex = 1;
             getToken();
             if(loggedIn==true)
             {
@@ -341,8 +372,12 @@ namespace CuCapuInNori
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
+
+            dataGridView2.Rows.Clear();
+            dataGridView3.Rows.Clear();
             if(tabControl1.SelectedIndex == 1)
             {
+                dataGridView1.Rows.Clear();
                 if (con.State == ConnectionState.Closed)
                     con.Open();
                 cmd = new SqlCommand("select taraAeroport from aeroporturi group by taraAeroport order by 1 asc ", con);
@@ -368,6 +403,29 @@ namespace CuCapuInNori
                 comboBox8.Items.Add("USD");
 
 
+            }
+            else
+            {
+                try
+                {
+                    if (con.State == ConnectionState.Closed)
+                        con.Open();
+                    cmd = new SqlCommand("select * from zboruri where idUser=@id", con);
+                    cmd.Parameters.AddWithValue("@id", loggedId);
+                    da = new SqlDataAdapter(cmd);
+                    dt = new DataTable();
+                    da.Fill(dt);
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                        dataGridView3.Rows.Add(dt.Rows[i][2], DateTime.Parse(dt.Rows[i][3].ToString()).ToString("MM/dd/yyyy"), DateTime.Parse(dt.Rows[i][3].ToString()).ToString("hh:mm"), dt.Rows[i][4].ToString(), DateTime.Parse(dt.Rows[i][5].ToString()).ToString("MM/dd/yyyy"), DateTime.Parse(dt.Rows[i][5].ToString()).ToString("hh:mm"), dt.Rows[i][6].ToString());
+                    if (con.State == ConnectionState.Open)
+                        con.Close();
+                }
+                catch(Exception ee)
+                {
+                    if (con.State == ConnectionState.Closed)
+                        con.Open();
+                    Date.Error(ee);
+                }
             }
         }
 
@@ -453,25 +511,64 @@ namespace CuCapuInNori
                         sos[1] = sos[1].Trim(')');
                         MessageBox.Show(sos[1]);
                         DateTime dataPlecare = dateTimePicker1.Value;
-                        DateTime dataSosire = dateTimePicker2.Value;
                         string dP = dataPlecare.Date.ToString("yyyy-MM-dd");
-                        string dS = dataSosire.Date.ToString("yyyy-MM-dd");
+
 
 
                         string url = "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode="+plec[1]+"&destinationLocationCode="+sos[1]+"&departureDate="+dP+"&adults="+comboBox5.SelectedItem.ToString()+"&children="+comboBox6.SelectedIndex.ToString()+ "&max=10&travelClass=" + comboBox7.SelectedItem.ToString()+ "&currencyCode=" + comboBox8.SelectedItem.ToString();
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                         var response = await client.GetStringAsync(url);
-                        ApiResponse apiResponse = JsonConvert.DeserializeObject<ApiResponse>(response);
-                        
+                        apiResponse = JsonConvert.DeserializeObject<ApiResponse>(response);
+
                         foreach (var flight in apiResponse.Data)
                         {
-                            if(lastprice!= double.Parse(flight.Price.Total))
-                            dataGridView1.Rows.Add(comboBox1.SelectedItem.ToString(),dP, comboBox2.SelectedItem.ToString(), dS, flight.Price.Total, "Cumpara");
+                            int i = 0;
+                            string firstdate="";
+                            if (lastprice != double.Parse(flight.Price.Total))
+                            {
+                                foreach (var itinerary in flight.Itineraries)
+                                {
+                                    foreach (var segment in itinerary.Segments)
+                                    {
+                                        if (i == 0)
+                                        {
+                                            firstdate = segment.Departure.At.ToString();
+                                            i++;
+                                        }
+                                        string departureTerminal = segment.Departure.Terminal;
+                                        string arrivalTerminal = segment.Arrival.Terminal;
+                                        string departureHour = segment.Departure.At.ToString();
+                                        string arrivalHour = segment.Arrival.At.ToString();
+                                        string flightDuration = segment.Duration;
+                                        Console.WriteLine($"Type: {flight.Type}, Origin: {segment.Departure.IataCode}, Destination: {segment.Arrival.IataCode}");
+                                        Console.WriteLine($"Price: {flight.Price.Total}");
+                                        Console.WriteLine($"Departure Terminal: {departureTerminal}");
+                                        Console.WriteLine($"Arrival Terminal: {arrivalTerminal}");
+                                        Console.WriteLine($"Departure Hour: {departureHour}");
+                                        Console.WriteLine($"Arrival Hour: {arrivalHour}");
+                                        Console.WriteLine($"Flight Duration: {flightDuration}");
+
+                                        lastdate = arrivalHour;
+
+
+                                    }
+                                }
+                                i--;
+                                dataGridView1.Rows.Add(comboBox1.SelectedItem.ToString(), firstdate, comboBox2.SelectedItem.ToString(), lastdate, flight.Price.Total, "Cumpara");
+                            }
                             lastprice = double.Parse(flight.Price.Total);
-
-
                         }
+
+                        foreach (var flight in apiResponse.Data)
+                         {
+                             if(lastprice!= double.Parse(flight.Price.Total))
+                             
+                             lastprice = double.Parse(flight.Price.Total);
+
+
+                         }
+                        
                     }
                
                     }
@@ -503,6 +600,30 @@ namespace CuCapuInNori
 
         }
 
+        public void sendMail(string subiect, string mesaj, string mailaddr, string nume, string prenume, string plecare, string data, string ora, string sosire, string datas,string oras, string pret)
+        {
+            using (MailMessage mail = new MailMessage())
+            {
+                mail.From = new MailAddress("themathcoder04@gmail.com");
+                mail.To.Add(mailaddr);
+                mail.Subject = subiect;
+                LinkedResource res = new LinkedResource(Date.folder + "logo.png", MediaTypeNames.Image.Jpeg);
+                res.ContentId = Guid.NewGuid().ToString();
+                string htmlBody = @"<img src='cid:" + res.ContentId + @"'/>" + @"<h1>" + mesaj + @"</h1>" + @"<br />" + @"<h2> Iti multumim ca ai ales sa folosesti serviciile noatre. Datele biletului tau sunt urmatoarele: </h2> <br /> <h2>Nume:" + nume + @"</h2>" + "<br /> <h2>Prenume:" + prenume + @"</h2> "+ @"</h2>" + "<br /> <h2>Plecare:" + plecare + @"</h2>"
++ "<br /> <h2>Data plecare:" + data + @"</h2>" + "<br /> <h2>Ora:" + ora + @"</h2>" + "<br /> <h2>Sosire:" + sosire + @"</h2>" + "<br /> <h2>Data sosire:" + datas + @"</h2>" + "<br /> <h2>Ora sosire:" + oras + @"</h2>" + "<br /> <h2>Pret:" + pret + @"</h2>";
+                AlternateView alternateView = AlternateView.CreateAlternateViewFromString(htmlBody, Encoding.UTF8, MediaTypeNames.Text.Html);
+                alternateView.LinkedResources.Add(res);
+                mail.AlternateViews.Add(alternateView);
+                mail.IsBodyHtml = true;
+
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new NetworkCredential("themathcoder04@gmail.com", "darw qcoe pvhg trgd");
+                    smtp.EnableSsl = true;
+                    smtp.Send(mail);
+                }
+            }
+        }
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             try
@@ -522,16 +643,75 @@ namespace CuCapuInNori
                             sos[1] = sos[1].Trim(')');
                             if (con.State == ConnectionState.Closed)
                                 con.Open();
-                            cmd = new SqlCommand("insert into bilete(iduser,codzbor,idlinieaeriana,orasplecare,orassosire,dataplecare,datasosire,pret)values(@idu,@cz,@idla,@orasplecare,@orassosire,@dataplecare,@datasosire,@pret)",con);
-                            cmd.Parameters.AddWithValue("@cz", plec[1] + sos[1] + r.Next(10000,99999).ToString());
-                            cmd.Parameters.AddWithValue("@idla", plec[1] + sos[1]);
-                            cmd.Parameters.AddWithValue("@orasplecare", dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
-                            cmd.Parameters.AddWithValue("@orassosire", dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString());
-                            cmd.Parameters.AddWithValue("@dataplecare", dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString());
-                            cmd.Parameters.AddWithValue("@datasosire", dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString());
-                            cmd.Parameters.AddWithValue("@pret", dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString());
-                            cmd.Parameters.AddWithValue("@idu", loggedId);
+                            DateTime dp = new DateTime();
+                            DateTime ds = new DateTime();
+                            if (con.State == ConnectionState.Closed)
+                                con.Open();
+                         //   dataGridView3.Rows.Add(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString(), DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString()).ToString(), DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString()).ToString("HH:mm"), dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString(), DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString()), DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString()).ToString("HH:mm"), float.Parse(dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString()));
+                            cmd = new SqlCommand("insert into zboruri(idUser,orasplecare,dataplecare,orassosire,datasosire,pret)values(@id,@op,@dp,@os,@ds,@pret)", con);
+                            cmd.Parameters.Add("@id",loggedId);
+                            cmd.Parameters.Add("@op", dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                            cmd.Parameters.Add("@dp", DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString()).ToString());
+                            cmd.Parameters.Add("@os", dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString());
+                            cmd.Parameters.Add("@ds", DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString()).ToString());
+                            cmd.Parameters.Add("@pret", float.Parse(dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString()));
                             cmd.ExecuteNonQuery();
+                            cmd = new SqlCommand("select email,nume,prenume from useri where iduser=@id", con);
+                            cmd.Parameters.AddWithValue("@id", loggedId);
+                            da = new SqlDataAdapter(cmd);
+                            dt = new DataTable();
+                            da.Fill(dt);
+                            sendMail("Confirmare Achizitie Bilet", "Salut, " + dt.Rows[0][1].ToString() + " " + dt.Rows[0][2].ToString(), dt.Rows[0][0].ToString(), dt.Rows[0][1].ToString(), dt.Rows[0][2].ToString(), dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString()
+                                , DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString()).ToString("dd/MM/yyyy"), DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString()).ToString("hh:mm"), dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString(), DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString()).ToString("dd/MM/yyyy"), DateTime.Parse(dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString()).ToString("hh:mm"), dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString());
+                            int count = 0;
+                            foreach (var flight in apiResponse.Data)
+                            {
+                                if (flight.Price.Total == dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString() && count == 0)
+                                {
+                                    foreach (var itinerary in flight.Itineraries)
+                                    {
+                                        foreach (var segment in itinerary.Segments)
+                                        {
+                                            string departureTerminal = segment.Departure.Terminal;
+                                            string arrivalTerminal = segment.Arrival.Terminal;
+                                            string departureHour = segment.Departure.At.ToString("dd/MM/yyyy HH:mm");
+                                            string arrivalHour = segment.Arrival.At.ToString("dd/MM/yyyy HH:mm");
+                                            string flightDuration = segment.Duration;
+                                            Console.WriteLine($"Type: {flight.Type}, Origin: {segment.Departure.IataCode}, Destination: {segment.Arrival.IataCode}");
+                                            Console.WriteLine($"Price: {flight.Price.Total}");
+                                            Console.WriteLine($"Departure Terminal: {departureTerminal}");
+                                            Console.WriteLine($"Arrival Terminal: {arrivalTerminal}");
+                                            Console.WriteLine($"Departure Hour: {departureHour}");
+                                            Console.WriteLine($"Arrival Hour: {arrivalHour}");
+                                            Console.WriteLine($"Flight Duration: {flightDuration}");
+                                            if (con.State == ConnectionState.Closed)
+                                                con.Open();
+                                            cmd = new SqlCommand("select orasAeroport from aeroporturi where codAeroport=@cod", con);
+                                            cmd.Parameters.AddWithValue("@cod", segment.Departure.IataCode);
+                                            da = new SqlDataAdapter(cmd);
+                                            dt = new DataTable();
+                                            da.Fill(dt);
+                                            DataTable dt2 = new DataTable();
+                                            cmd = new SqlCommand("select orasAeroport from aeroporturi where codAeroport=@cod", con);
+                                            cmd.Parameters.AddWithValue("@cod", segment.Arrival.IataCode);
+                                            da = new SqlDataAdapter(cmd);
+                                            da.Fill(dt2);
+                                            int unique = r.Next(10000, 99999);
+                                            //  dataGridView2.Rows.Add(segment.Departure.IataCode + segment.Arrival.IataCode + unique, dt.Rows[0][0].ToString(),segment.Departure.At.ToString("dd-MM-yyyy"),segment.Departure.At.ToString("hh:mm"),dt2.Rows[0][0].ToString(), segment.Arrival.At.ToString("dd-MM-yyyy"), segment.Arrival.At.ToString("hh:mm"));
+                                            cmd = new SqlCommand("insert into bilete(codzbor,orasplecare,orassosire,dataplecare,datasosire,idzbor)values(@cod,@op,@os,@dp,@ds,(select count(*) from zboruri))", con);
+                                            cmd.Parameters.AddWithValue("@cod", segment.Departure.IataCode + segment.Arrival.IataCode + unique);
+                                            cmd.Parameters.AddWithValue("@op", dt.Rows[0][0].ToString() + " (" + segment.Departure.IataCode.ToString() + ")" );
+                                            cmd.Parameters.AddWithValue("@os", dt2.Rows[0][0].ToString() + " (" + segment.Arrival.IataCode.ToString() + ")" );
+
+                                            cmd.Parameters.AddWithValue("@ds", segment.Arrival.At);
+                                            cmd.Parameters.AddWithValue("@dp",segment.Departure.At);
+                                            cmd.ExecuteNonQuery();
+                                        }
+                                    }
+                                    count++;
+                                }
+                            }
+
                         }
                     }
                     else
@@ -572,7 +752,7 @@ namespace CuCapuInNori
         {
             try
             {
-                string url = "https://test.api.amadeus.com/v1/shopping/flight-destinations?origin=PAR&maxPrice=200";
+                string url = "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=VIE&destinationLocationCode=SYD&departureDate=2024-07-02&adults=1&max=2&returnDate=2024-07-05";
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var response = await client.GetStringAsync(url);
@@ -580,10 +760,24 @@ namespace CuCapuInNori
 
                 foreach (var flight in apiResponse.Data)
                 {
-                    Console.WriteLine($"Type: {flight.Type}, Origin: {flight.Origin}, Destination: {flight.Destination}");
-                    Console.WriteLine($"Departure Date: {flight.DepartureDate}, Return Date: {flight.ReturnDate}");
-                    Console.WriteLine($"Price: {flight.Price.Total}");
-                    Console.WriteLine();
+                    foreach (var itinerary in flight.Itineraries)
+                    {
+                        foreach (var segment in itinerary.Segments)
+                        {
+                            string departureTerminal = segment.Departure.Terminal;
+                            string arrivalTerminal = segment.Arrival.Terminal;
+                            string departureHour = segment.Departure.At.ToString("dd/MM/yyyy HH:mm");
+                            string arrivalHour = segment.Arrival.At.ToString("dd/MM/yyyy HH:mm");
+                            string flightDuration = segment.Duration;
+                            Console.WriteLine($"Type: {flight.Type}, Origin: {segment.Departure.IataCode}, Destination: {segment.Arrival.IataCode}");
+                            Console.WriteLine($"Price: {flight.Price.Total}");
+                            Console.WriteLine($"Departure Terminal: {departureTerminal}");
+                            Console.WriteLine($"Arrival Terminal: {arrivalTerminal}");
+                            Console.WriteLine($"Departure Hour: {departureHour}");
+                            Console.WriteLine($"Arrival Hour: {arrivalHour}");
+                            Console.WriteLine($"Flight Duration: {flightDuration}");
+                        }
+                    }
                 }
             }
             catch (Exception ee)
@@ -595,6 +789,34 @@ namespace CuCapuInNori
         private void button3_Click_1(object sender, EventArgs e)
         {
             tabControl1.SelectedIndex = 0;
+        }
+
+        private void checkBox1_CheckStateChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        { 
+        }
+
+        private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView3.Rows[e.RowIndex].Cells[0].Value != null)
+            {
+                dataGridView2.Rows.Clear();
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                cmd = new SqlCommand("select * from bilete where idzbor=(select idzbor from zboruri where orasplecare=@op and orassosire=@os and iduser=@id)", con);
+                cmd.Parameters.AddWithValue("@op",dataGridView3.Rows[e.RowIndex].Cells[0].Value.ToString());
+                cmd.Parameters.AddWithValue("@os", dataGridView3.Rows[e.RowIndex].Cells[3].Value.ToString());
+                cmd.Parameters.AddWithValue("@id",loggedId);
+                da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                    dataGridView2.Rows.Add(dt.Rows[i][1], dt.Rows[i][2], dt.Rows[i][4], DateTime.Parse(dt.Rows[i][4].ToString()).ToString("hh:mm"), dt.Rows[i][3].ToString(), DateTime.Parse(dt.Rows[i][5].ToString()).ToString("MM/dd/yyyy"), DateTime.Parse(dt.Rows[i][5].ToString()).ToString("hh:mm"));
+            }
         }
 
         private void panel2_Paint(object sender, PaintEventArgs e)
